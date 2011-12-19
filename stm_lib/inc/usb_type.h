@@ -1,8 +1,8 @@
-/******************** (C) COPYRIGHT 2010 STMicroelectronics ********************
+/******************** (C) COPYRIGHT 2011 STMicroelectronics ********************
 * File Name          : usb_type.h
 * Author             : MCD Application Team
-* Version            : V3.2.1
-* Date               : 07/05/2010
+* Version            : V3.3.0
+* Date               : 21-March-2011
 * Description        : Type definitions used by the USB Library
 ********************************************************************************
 * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
@@ -26,7 +26,7 @@
 #define NULL ((void *)0)
 #endif
 
-#ifndef __STM32F10x_H
+#if !defined (__STM32F10x_H) && !defined(__STM32L1XX_H)
 
 typedef signed long      s32;
 typedef signed short     s16;
@@ -52,6 +52,12 @@ typedef volatile unsigned long  const    vuc32;  /* Read Only */
 typedef volatile unsigned short const    vuc16;  /* Read Only */
 typedef volatile unsigned char  const    vuc8;   /* Read Only */
 
+typedef enum { RESET = 0, SET   = !RESET } FlagStatus, ITStatus;
+
+typedef enum { DISABLE = 0, ENABLE  = !DISABLE} FunctionalState;
+
+typedef enum { ERROR = 0, SUCCESS  = !ERROR} ErrorStatus;
+#endif /* __STM32F10x_H && __STM32L15x_H */
 
 typedef enum
 {
@@ -59,16 +65,10 @@ typedef enum
 }
 bool;
 
-typedef enum { RESET = 0, SET   = !RESET } FlagStatus, ITStatus;
-
-typedef enum { DISABLE = 0, ENABLE  = !DISABLE} FunctionalState;
-
-typedef enum { ERROR = 0, SUCCESS  = !ERROR} ErrorStatus;
-#endif
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 /* External variables --------------------------------------------------------*/
 
 #endif /* __USB_TYPE_H */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

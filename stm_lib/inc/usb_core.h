@@ -1,8 +1,8 @@
-/******************** (C) COPYRIGHT 2010 STMicroelectronics ********************
+/******************** (C) COPYRIGHT 2011 STMicroelectronics ********************
 * File Name          : usb_core.h
 * Author             : MCD Application Team
-* Version            : V3.2.1
-* Date               : 07/05/2010
+* Version            : V3.3.0
+* Date               : 21-March-2011
 * Description        : Standard protocol processing functions prototypes
 ********************************************************************************
 * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
@@ -44,11 +44,11 @@ ONE_DESCRIPTOR, *PONE_DESCRIPTOR;
    the software will STALL the correspond endpoint */
 typedef enum _RESULT
 {
-  USB_SUCCESS = 0,    /* Process sucessfully */
+  USB_SUCCESS = 0,    /* Process successfully */
   USB_ERROR,
   USB_UNSUPPORT,
   USB_NOT_READY       /* The process has not been finished, endpoint will be
-                         NAK to further rquest */
+                         NAK to further request */
 } RESULT;
 
 
@@ -243,4 +243,4 @@ extern __IO uint16_t SaveTState;
 
 #endif /* __USB_CORE_H */
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

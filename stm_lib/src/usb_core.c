@@ -1,8 +1,8 @@
-/******************** (C) COPYRIGHT 2010 STMicroelectronics ********************
+/******************** (C) COPYRIGHT 2011 STMicroelectronics ********************
 * File Name          : usb_core.c
 * Author             : MCD Application Team
-* Version            : V3.2.1
-* Date               : 07/05/2010
+* Version            : V3.3.0
+* Date               : 21-March-2011
 * Description        : Standard protocol processing (USB v2.0)
 ********************************************************************************
 * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
@@ -73,7 +73,7 @@ uint8_t *Standard_GetConfiguration(uint16_t Length)
 /*******************************************************************************
 * Function Name  : Standard_SetConfiguration.
 * Description    : This routine is called to set the configuration value
-*                  Then each class should configure device themself.
+*                  Then each class should configure device itself.
 * Input          : None.
 * Output         : None.
 * Return         : Return USB_SUCCESS, if the request is performed.
@@ -605,9 +605,8 @@ void NoData_Setup0(void)
     /*SET FEATURE for Device*/
     else if (RequestNo == SET_FEATURE)
     {
-      if ((pInformation->USBwValue0 == DEVICE_REMOTE_WAKEUP)
-          && (pInformation->USBwIndex == 0)
-          && (ValBit(pInformation->Current_Feature, 5)))
+      if ((pInformation->USBwValue0 == DEVICE_REMOTE_WAKEUP) \
+          && (pInformation->USBwIndex == 0))
       {
         Result = Standard_SetDeviceFeature();
       }
@@ -1051,7 +1050,7 @@ uint8_t Post0_Process(void)
 /*******************************************************************************
 * Function Name  : SetDeviceAddress.
 * Description    : Set the device and all the used Endpoints addresses.
-* Input          : - Val: device adress.
+* Input          : - Val: device address.
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
@@ -1083,4 +1082,4 @@ void NOP_Process(void)
 {
 }
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

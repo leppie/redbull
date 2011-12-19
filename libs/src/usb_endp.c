@@ -147,7 +147,7 @@ void SOF_Callback(void)
 
 #endif
 
-static volatile bool tx_in_progress = FALSE;
+static volatile uint32_t tx_in_progress = 0;
 static volatile u16 rx_pma_count = 0;
 static u8 rx_buffer[VIRTUAL_COM_PORT_DATA_SIZE];
 static u16 rx_buffer_count = 0;
@@ -171,7 +171,7 @@ static inline void Disable_USB_Interrupts(void)
 
 void EP1_IN_Callback(void)                  // on transmit
 {
-  tx_in_progress = FALSE;
+  tx_in_progress = 0;
 }
 
 u32 Virtual_Com_Port_Transmit_Available()
@@ -183,7 +183,7 @@ u32 Virtual_Com_Port_Transmit_Non_Blocking(u8* data, u32 length)
 {
   u32 l;
   if (!length || tx_in_progress) return 0;
-  tx_in_progress = TRUE;
+  tx_in_progress = 1;
   l = length <= VIRTUAL_COM_PORT_DATA_SIZE ? length : VIRTUAL_COM_PORT_DATA_SIZE;
   UserToPMABufferCopy(data, ENDP1_TXADDR, l);
   Disable_USB_Interrupts();

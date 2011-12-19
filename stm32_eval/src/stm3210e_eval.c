@@ -2,15 +2,15 @@
   ******************************************************************************
   * @file    stm3210e_eval.c
   * @author  MCD Application Team
-  * @version V4.2.0
-  * @date    04/16/2010
+  * @version V4.5.0
+  * @date    07-March-2011
   * @brief   This file provides
   *            - set of firmware functions to manage Leds, push-button and COM ports
   *            - low level initialization functions for SD card (on SDIO), SPI serial
   *              flash (sFLASH) and temperature sensor (LM75)
   *          available on STM3210E-EVAL evaluation board from STMicroelectronics.  
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -19,7 +19,8 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************  
   */ 
   
 /* Includes ------------------------------------------------------------------*/
@@ -73,6 +74,9 @@
   */ 
 
 
+/** @defgroup STM3210E_EVAL_LOW_LEVEL_Private_Variables
+  * @{
+  */
 
 
 /**
@@ -131,7 +135,7 @@ void SD_LowLevel_Init(void)
 
   /*!< Configure SD_SPI_DETECT_PIN pin: SD Card detect pin */
   GPIO_InitStructure.GPIO_Pin = SD_DETECT_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
   GPIO_Init(SD_DETECT_GPIO_PORT, &GPIO_InitStructure);
   
   /*!< Enable the SDIO AHB Clock */
@@ -209,14 +213,13 @@ void SD_LowLevel_DMA_RxConfig(uint32_t *BufferDST, uint32_t BufferSize)
 }
 
 /**
-  * @brief  Wait For DMA End Of Transfer.
+  * @brief  Returns the DMA End Of Transfer Status.
   * @param  None
-  * @retval None
+  * @retval DMA SDIO Channel Status.
   */
-void SD_WaitForDMAEndOfTransfer(void)
+uint32_t SD_DMAEndOfTransferStatus(void)
 {
-  while (DMA_GetFlagStatus(DMA2_FLAG_TC4) == RESET)
-  {}
+  return (uint32_t)DMA_GetFlagStatus(DMA2_FLAG_TC4);
 }
 
 
@@ -240,4 +243,4 @@ void SD_WaitForDMAEndOfTransfer(void)
   * @}
   */ 
     
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

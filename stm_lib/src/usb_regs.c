@@ -1,8 +1,8 @@
-/******************** (C) COPYRIGHT 2010 STMicroelectronics ********************
+/******************** (C) COPYRIGHT 2011 STMicroelectronics ********************
 * File Name          : usb_regs.c
 * Author             : MCD Application Team
-* Version            : V3.2.1
-* Date               : 07/05/2010
+* Version            : V3.3.0
+* Date               : 21-March-2011
 * Description        : Interface functions to USB cell registers
 ********************************************************************************
 * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
@@ -135,7 +135,7 @@ uint16_t GetBTABLE(void)
 
 /*******************************************************************************
 * Function Name  : SetENDPOINT
-* Description    : Setthe Endpoint register value.
+* Description    : Set the Endpoint register value.
 * Input          : bEpNum: Endpoint Number. 
 *                  wRegValue.
 * Output         : None.
@@ -747,4 +747,4 @@ uint16_t ByteSwap(uint16_t wSwW)
 }
 
 #endif /* STM32F10X_CL */
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

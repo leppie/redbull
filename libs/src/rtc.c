@@ -23,7 +23,7 @@ static const uint8_t DaysInMonth[] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 3
 *  DST according to German standard
 *  Based on code from Peter Dannegger found in the microcontroller.net forum.
 *******************************************************************************/
-static bool isDST( const RTC_t *t )
+static uint32_t isDST( const RTC_t *t )
 {
 	uint8_t wday, month;		// locals for faster access
 
@@ -31,7 +31,7 @@ static bool isDST( const RTC_t *t )
 
 	if( month < 3 || month > 10 )
 	{		// month 1, 2, 11, 12
-		return FALSE;					// -> Winter
+		return 0;					// -> Winter
 	}
 
 	wday  = t->wday;
@@ -40,18 +40,18 @@ static bool isDST( const RTC_t *t )
 	{ // after last Sunday 2:00
 		if( month == 10 )
 		{				// October -> Winter
-			return FALSE;
+			return 0;
 		}
 	}
 	else
 	{							// before last Sunday 2:00
 		if( month == 3 )
 		{				// March -> Winter
-			return FALSE;
+			return 0;
 		}
 	}
 
-	return TRUE;
+	return 1;
 }
 
 /*******************************************************************************
@@ -63,7 +63,7 @@ static bool isDST( const RTC_t *t )
 *  DST according to German standard
 *  Based on code from Peter Dannegger found in the mikrocontroller.net forum.
 *******************************************************************************/
-static bool adjustDST( RTC_t *t )
+static uint32_t adjustDST( RTC_t *t )
 {
 	uint8_t hour, day, wday, month;			// locals for faster access
 
@@ -97,12 +97,12 @@ static bool adjustDST( RTC_t *t )
 		t->hour  = hour;
 		t->mday  = day;
 		t->wday  = wday;
-		return TRUE;
+		return 1;
 	}
 	else
 	{
 		t->dst = 0;
-		return FALSE;
+		return 0;
 	}
 }
 
@@ -234,7 +234,7 @@ static uint32_t struct_to_counter( const RTC_t *t )
 * Output         : time-struct gets modified
 * Return         : always true/not used
 *******************************************************************************/
-bool RTC_GetTime (RTC_t *rtc)
+uint32_t RTC_GetTime (RTC_t *rtc)
 {
 	uint32_t t;
 
@@ -242,7 +242,7 @@ bool RTC_GetTime (RTC_t *rtc)
 	counter_to_struct( t, rtc ); // get non DST time
 	adjustDST( rtc );
 
-	return TRUE;
+	return 1;
 }
 
 /*******************************************************************************
@@ -270,7 +270,7 @@ static void my_RTC_SetCounter(uint32_t cnt)
 * Output         : None
 * Return         : not used
 *******************************************************************************/
-bool RTC_SetTime (const RTC_t *rtc)
+uint32_t RTC_SetTime (const RTC_t *rtc)
 {
 	uint32_t cnt;
 	RTC_t ts;
@@ -285,7 +285,7 @@ bool RTC_SetTime (const RTC_t *rtc)
 	my_RTC_SetCounter( cnt );
 	PWR_BackupAccessCmd(DISABLE);
 
-	return TRUE;
+	return 1;
 }
 
 /*******************************************************************************
