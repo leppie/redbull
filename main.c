@@ -25,6 +25,7 @@
 #include <math.h>
 #include <string.h>
 
+#include "stm32_eval.h"
 #include "stm32_eval_sdio_sd.h"
 #include "stm3210e_eval_fsmc_nand.h"
 #include "stm3210e_eval_fsmc_nor.h"
@@ -43,18 +44,13 @@ void USART_STDIO_Init();
 
 #define LED_PORT GPIOF
 
-#define LED(x) (GPIO_Pin_10 >> ((x) - 1))
-#define LED1 LED(1)
-#define LED2 LED(2)
-#define LED3 LED(3)
-#define LED4 LED(4)
-#define LED5 LED(5)
-#define LED_ALL (LED1 | LED2 | LED3 | LED4 | LED5)
+#define LED(x) (GPIO_Pin_6 << ((x) - 1))
+#define LED_ALL (LED(1) | LED(2) | LED(3) | LED(4) | LED(5))
+
 
 void LED_On(uint16_t leds)
 {
 	LED_PORT->ODR = ~leds;
-
 }
 
 void LED_Off(uint16_t leds)
@@ -803,6 +799,20 @@ void DAC_Config(void)
 	TIM_Cmd(TIM2, ENABLE);
 }
 
+void toggleLED(int pin, int prev)
+{
+	if (pin)
+	{
+	  GPIO_ResetBits(GPIOF, pin);
+	  Delay(5);
+	}
+	if (prev)
+	{
+	  GPIO_SetBits(GPIOF, prev);
+	  Delay(20);
+	}
+}
+
 static FATFS fatfs;
 
 /**
@@ -814,57 +824,159 @@ int main(void)
 {
 	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0000);
 
+	Delay_Init();
+
 	USART_STDIO_Init();
 
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
 
-#if WTF
-	*((uint32_t*)BUFFER) = 0xf5f5f5f5;
+	STM3210E_LCD_Init();
 
-	unsigned int wtf = *((uint32_t*)BUFFER);
-#endif
+	LCD_SetFont(&Font8x12);
+	LCD_SetColors(LCD_COLOR_WHITE, LCD_COLOR_BLACK);
 
-	SRAM_Init();
-	NOR_Init();
-	NAND_Init();
+	for (int i = 0; i < (320 * 240); i++)
+	{
+	  LCD_WriteRAM(LCD_COLOR_WHITE);
+	}
 
-	Delay_Init();
+	for (int i = 0; i < (320 * 240); i++)
+	{
+	  LCD_WriteRAM(LCD_COLOR_BLACK);
+	}
 
+	LCD_DisplayStringLine(LINE(0), " initializing REDBULL");
+
+	LCD_DisplayStringLine(LINE(2), " LCD ............................320x240");
+
+	LCD_DisplayStringLine(LINE(3), " LED ..................................");
+	LED_Init();
+
+	toggleLED(LED1_PIN, 0);
+	toggleLED(LED2_PIN, LED1_PIN);
+	toggleLED(LED3_PIN, LED2_PIN);
+	toggleLED(LED4_PIN, LED3_PIN);
+	toggleLED(LED5_PIN, LED4_PIN);
+	toggleLED(LED4_PIN, LED5_PIN);
+	toggleLED(LED3_PIN, LED4_PIN);
+	toggleLED(LED2_PIN, LED3_PIN);
+	toggleLED(LED1_PIN, LED2_PIN);
+	toggleLED(0		  , LED1_PIN);
+
+	LCD_DisplayChar(LINE(3),7,'5');
+
+	LCD_DisplayStringLine(LINE(4), " RTC ................");
+	RTC_Init();
+
+
+	char buff[128] = {0};
+	RTC_t rtc =
+	{
+	  .year = 2011,
+	  .month = 12,
+	  .mday = 19,
+	  .hour = 21,
+	  .min = 00
+	};
+
+	//RTC_SetTime(&rtc);
+
+	RTC_GetTime(&rtc);
+	sprintf(buff, "%04d/%02d/%02d %02d:%02d:%02d", rtc.year, rtc.month, rtc.mday,  rtc.hour, rtc.min, rtc.sec);
+
+	for (int i = 0; i < 19; i++)
+	{
+		LCD_DisplayChar(LINE(4), (19 * 8) - (i * 8) - 1, buff[i]);
+	}
+
+	LCD_DisplayStringLine(LINE(5), " USB .................................");
 	Set_USBClock();
 	Set_System();
 	USB_Interrupts_Config();
 	USB_Init();
+	LCD_DisplayChar(LINE(5),15,'o');
+	LCD_DisplayChar(LINE(5),7,'k');
 
-	STM3210E_LCD_Init();
+//IS61LV25616 (512KB)
+	LCD_DisplayStringLine(LINE(6), " SRAM ................................");
+	SRAM_Init();
 
-	RTC_Init();
+	uint32_t* RAM = (uint32_t*) Bank1_SRAM3_ADDR;
+	uint8_t TESTOK = 1;
 
-	LED_Init();
+	for (uint32_t i = 0; i < (512 * 1024)/4; i++)
+	{
+		RAM[i] = i;
+	}
+
+	for (uint32_t i = 0; i < (512 * 1024)/4; i++)
+	{
+	   if (RAM[i] != i)
+	   {
+		  TESTOK = 0;
+	   }
+	   RAM[i] = 0;
+	}
+
+	if (TESTOK)
+	{
+	  LCD_DisplayChar(LINE(6),39,'5');
+	  LCD_DisplayChar(LINE(6),31,'1');
+	  LCD_DisplayChar(LINE(6),23,'2');
+	  LCD_DisplayChar(LINE(6),15,'K');
+	  LCD_DisplayChar(LINE(6),7,'B');
+	}
+	else
+	{
+	  LCD_DisplayChar(LINE(6),31,'f');
+	  LCD_DisplayChar(LINE(6),23,'a');
+	  LCD_DisplayChar(LINE(6),15,'i');
+	  LCD_DisplayChar(LINE(6),7,'l');
+	}
+
+	//M29W128F (2MB)
+	LCD_DisplayStringLine(LINE(7), " NOR .................................");
+	NOR_Init();
+	NOR_IDTypeDef norid;
+	NOR_ReadID(&norid);
+	LCD_DisplayChar(LINE(7),15,'o');
+	LCD_DisplayChar(LINE(7),7,'k');
+
+	//HY27UF081G2A (128MB)
+	LCD_DisplayStringLine(LINE(8), " NAND ................................");
+	NAND_Init();
+	NAND_IDTypeDef nandid;
+	NAND_ReadID(&nandid);
+	LCD_DisplayChar(LINE(8),15,'o');
+	LCD_DisplayChar(LINE(8),7,'k');
+
+	LCD_DisplayStringLine(LINE(9), " SDIO ................................");
 	SD_Init();
+	SD_CardInfo cardinfo;
+	SD_GetCardInfo(&cardinfo);
+	LCD_DisplayChar(LINE(9),15,'o');
+	LCD_DisplayChar(LINE(9),7,'k');
 
+	LCD_DisplayStringLine(LINE(10), " Analog ..............................");
 	Analog_Config();
+	LCD_DisplayChar(LINE(10),15,'o');
+	LCD_DisplayChar(LINE(10),7,'k');
 
+	LCD_DisplayStringLine(LINE(11), " DAC .................................");
 	DAC_Config();
+	LCD_DisplayChar(LINE(11),15,'o');
+	LCD_DisplayChar(LINE(11),7,'k');
 
 	f_mount(0, &fatfs);
 
 	//static char path[1024] = "0:";
 
 	//LCD_Clear(LCD_COLOR_BLUE);
-	LCD_SetColors(LCD_COLOR_WHITE, LCD_COLOR_BLACK);
 
-	NAND_IDTypeDef nandid;
-	NAND_ReadID(&nandid);
-
-	NOR_IDTypeDef norid;
-	NOR_ReadID(&norid);
-
-	SD_CardInfo cardinfo;
-	SD_GetCardInfo(&cardinfo);
 
 	//LCD_DisplayStringLine(0, (uint8_t*) "Loading...");
 
-	//Delay(5000);
+	Delay(3000);
 
 	//int i = 10;
 
@@ -981,8 +1093,7 @@ int main(void)
 
 			DMA_Cmd(DMA2_Channel5, ENABLE);
 
-			while (!DMA_GetFlagStatus(DMA2_FLAG_TC5))
-				;
+			while (!DMA_GetFlagStatus(DMA2_FLAG_TC5));
 
 			DMA_ClearFlag(DMA2_FLAG_TC5);
 

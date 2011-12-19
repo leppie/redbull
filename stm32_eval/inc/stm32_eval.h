@@ -2,11 +2,11 @@
   ******************************************************************************
   * @file    stm32_eval.h
   * @author  MCD Application Team
-  * @version V4.2.0
-  * @date    04/16/2010
+  * @version V4.5.0
+  * @date    07-March-2011
   * @brief   Header file for stm32_eval.c module.
   ******************************************************************************
-  * @copy
+  * @attention
   *
   * THE PRESENT FIRMWARE WHICH IS FOR GUIDANCE ONLY AIMS AT PROVIDING CUSTOMERS
   * WITH CODING INFORMATION REGARDING THEIR PRODUCTS IN ORDER FOR THEM TO SAVE
@@ -15,7 +15,8 @@
   * FROM THE CONTENT OF SUCH FIRMWARE AND/OR THE USE MADE BY CUSTOMERS OF THE
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
-  * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
+  * <h2><center>&copy; COPYRIGHT 2011 STMicroelectronics</center></h2>
+  ******************************************************************************  
   */ 
   
 /* Define to prevent recursive inclusion -------------------------------------*/
@@ -64,6 +65,10 @@
    STM3210C-EVAL   |  4  |    3     |     1     | YES (SPI) | YES  |  NO    | YES |   NO    |    YES   |    NO     |
   -----------------------------------------------------------------------------------------------------------------+
    STM32100B-EVAL  |  4  |    8     |     2     | YES (SPI) | NO   |  YES   | NO  |   YES   |    YES   |    NO     |
+  -----------------------------------------------------------------------------------------------------------------+
+   STM32L152-EVAL  |  4  |    8     |     2     | YES (SPI) | NO   |  NO    | NO  |   YES   |    YES   |    NO     |
+  -----------------------------------------------------------------------------------------------------------------+
+   STM32100E-EVAL  |  4  |    8     |     2     | YES (FSMC)| YES  |  YES   | YES |   YES   |    YES   |    NO     |
   =================================================================================================================+
 @endcode
 */
@@ -72,14 +77,44 @@
   * @}
   */
   
+/** @defgroup STM32_EVAL_Exported_Types
+  * @{
+  */
+typedef enum 
+{
+  LED1 = 0,
+  LED2 = 1,
+  LED3 = 2,
+  LED4 = 3,
+  LED5 = 4
+} Led_TypeDef;
 
+typedef enum 
+{  
+  BUTTON_WAKEUP = 0,
+  BUTTON_TAMPER = 1,
+  BUTTON_USER1 = 2,
+  BUTTON_USER2 = 3,
+} Button_TypeDef;
+
+typedef enum 
+{  
+  BUTTON_MODE_GPIO = 0,
+  BUTTON_MODE_EXTI = 1
+} ButtonMode_TypeDef;
+
+typedef enum 
+{
+  COM1 = 0,
+  COM2 = 1
+} COM_TypeDef;   
 /**
   * @}
   */ 
   
 /** @defgroup STM32_EVAL_Exported_Constants
   * @{
-  */ 
+  */
 
 /** 
   * @brief  Uncomment the line corresponding to the STMicroelectronics evaluation
@@ -88,11 +123,14 @@
   *  Tip: To avoid modifying this file each time you need to switch between these
   *       boards, you can define the board in your toolchain compiler preprocessor.    
   */ 
-#if !defined (USE_STM32100B_EVAL) && !defined (USE_STM3210B_EVAL) &&  !defined (USE_STM3210E_EVAL) &&  !defined (USE_STM3210C_EVAL)
+#if !defined (USE_STM32100B_EVAL) && !defined (USE_STM3210B_EVAL) &&  !defined (USE_STM3210E_EVAL)\
+   &&  !defined (USE_STM3210C_EVAL) &&  !defined (USE_STM32L152_EVAL) &&  !defined (USE_STM32100E_EVAL)
  //#define USE_STM32100B_EVAL
  //#define USE_STM3210B_EVAL
  //#define USE_STM3210E_EVAL
  //#define USE_STM3210C_EVAL
+ //#define USE_STM32L152_EVAL
+ //#define USE_STM32100E_EVAL
 #endif
 
 #ifdef USE_STM32100B_EVAL
@@ -107,6 +145,12 @@
 #elif defined USE_STM3210C_EVAL
  #include "stm32f10x.h"
  #include "stm3210c_eval/stm3210c_eval.h"
+#elif defined USE_STM32L152_EVAL
+ #include "stm32l1xx.h"
+ #include "stm32l152_eval/stm32l152_eval.h" 
+#elif defined USE_STM32100E_EVAL
+ #include "stm32f10x.h"
+ #include "stm32100e_eval/stm32100e_eval.h"
 #else 
  #error "Please select first the STM32 EVAL board to be used (in stm32_eval.h)"
 #endif                      
@@ -148,4 +192,4 @@
   * @}
   */   
 
-/******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/
+/******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

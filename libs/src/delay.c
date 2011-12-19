@@ -16,7 +16,6 @@ void Delay(uint32_t ms)
   if (till < t)
   {
     till = ms;
-    ticks = 0;
   }
   while (ticks < till); // till we overflow and kaboom
 }

@@ -307,7 +307,9 @@ void STM3210E_LCD_Init(void)
   /* AM=1 (address is updated in vertical writing direction) */
   LCD_WriteReg(LCD_REG_3, 0x1018);
   LCD_WriteReg(LCD_REG_7, 0x0173); /* 262K color and display ON */  
-  LCD_SetFont(&LCD_DEFAULT_FONT);  
+  LCD_SetFont(&LCD_DEFAULT_FONT);
+
+  LCD_Clear(LCD_COLOR_BLUE);
 }
 
 /**
@@ -1046,7 +1048,7 @@ void LCD_FillPolyLine(pPoint Points, uint16_t PointCount)
 
     for (i = 0; i < PointCount; i++) 
     {
-      if (POLY_Y(i)<(double) pixelY && POLY_Y(j)>=(double) pixelY || POLY_Y(j)<(double) pixelY && POLY_Y(i)>=(double) pixelY) 
+      if ((POLY_Y(i)<(double) pixelY && POLY_Y(j)>=(double) pixelY) || (POLY_Y(j)<(double) pixelY && POLY_Y(i)>=(double) pixelY))
       {
         nodeX[nodes++]=(int) (POLY_X(i)+((pixelY-POLY_Y(i))*(POLY_X(j)-POLY_X(i)))/(POLY_Y(j)-POLY_Y(i))); 
       }
