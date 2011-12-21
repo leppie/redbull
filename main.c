@@ -37,6 +37,7 @@
 #include "usb_vcom.h"
 #include "ff.h"
 #include "numbers.h"
+#include "one-wire.h"
 
 void USART_STDIO_Init();
 
@@ -71,6 +72,19 @@ void LED_Init(void)
 	GPIO_Init(LED_PORT, &leds);
 
 	LED_Off(LED_ALL);
+}
+
+void OneWireInit(void)
+{
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	ow_reset();
+
+	ow_write_byte(0xcc);
+	ow_write_byte(0x4e);
+	ow_write_byte(0);
+	ow_write_byte(0);
+	ow_write_byte(0);
+	ow_reset();
 }
 
 void assert_failed(uint8_t* file, uint32_t line)
@@ -813,6 +827,40 @@ void toggleLED(int pin, int prev)
 	}
 }
 
+void print(int line, int col, char* text)
+{
+	for (;*text; text++ )
+	{
+		int c = 319 - (col * LCD_GetFont()->Width);
+		if (c > 0)
+		{
+			LCD_DisplayChar(LINE(line), c, *text);
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+
+void printRight(int line, char* text)
+{
+	int l = strlen(text);
+	int col = 40 - l;
+	for (;*text; text++, col++ )
+	{
+		int c = 319 - (col * LCD_GetFont()->Width);
+		if (c > 0)
+		{
+			LCD_DisplayChar(LINE(line), c, *text);
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+
 static FATFS fatfs;
 
 /**
@@ -824,7 +872,7 @@ int main(void)
 {
 	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0000);
 
-	Delay_Init();
+	char buff[128] = {0};
 
 	USART_STDIO_Init();
 
@@ -847,6 +895,12 @@ int main(void)
 
 	LCD_DisplayStringLine(LINE(0), " initializing REDBULL");
 
+	LCD_DisplayStringLine(LINE(1), " CPU ...............................");
+
+	sprintf(buff, "ARM Cortex-M3 @ %dMHz", SystemCoreClock/1000000);
+
+	printRight(1, buff);
+
 	LCD_DisplayStringLine(LINE(2), " LCD ............................320x240");
 
 	LCD_DisplayStringLine(LINE(3), " LED ..................................");
@@ -863,13 +917,12 @@ int main(void)
 	toggleLED(LED1_PIN, LED2_PIN);
 	toggleLED(0		  , LED1_PIN);
 
-	LCD_DisplayChar(LINE(3),7,'5');
+	printRight(3, "5");
 
 	LCD_DisplayStringLine(LINE(4), " RTC ................");
 	RTC_Init();
 
 
-	char buff[128] = {0};
 	RTC_t rtc =
 	{
 	  .year = 2011,
@@ -884,18 +937,15 @@ int main(void)
 	RTC_GetTime(&rtc);
 	sprintf(buff, "%04d/%02d/%02d %02d:%02d:%02d", rtc.year, rtc.month, rtc.mday,  rtc.hour, rtc.min, rtc.sec);
 
-	for (int i = 0; i < 19; i++)
-	{
-		LCD_DisplayChar(LINE(4), (19 * 8) - (i * 8) - 1, buff[i]);
-	}
+	printRight(4, buff);
 
 	LCD_DisplayStringLine(LINE(5), " USB .................................");
 	Set_USBClock();
 	Set_System();
 	USB_Interrupts_Config();
 	USB_Init();
-	LCD_DisplayChar(LINE(5),15,'o');
-	LCD_DisplayChar(LINE(5),7,'k');
+
+	printRight(5, "ok");
 
 //IS61LV25616 (512KB)
 	LCD_DisplayStringLine(LINE(6), " SRAM ................................");
@@ -920,18 +970,11 @@ int main(void)
 
 	if (TESTOK)
 	{
-	  LCD_DisplayChar(LINE(6),39,'5');
-	  LCD_DisplayChar(LINE(6),31,'1');
-	  LCD_DisplayChar(LINE(6),23,'2');
-	  LCD_DisplayChar(LINE(6),15,'K');
-	  LCD_DisplayChar(LINE(6),7,'B');
+		printRight(6,"IS61LV25616 512KB");
 	}
 	else
 	{
-	  LCD_DisplayChar(LINE(6),31,'f');
-	  LCD_DisplayChar(LINE(6),23,'a');
-	  LCD_DisplayChar(LINE(6),15,'i');
-	  LCD_DisplayChar(LINE(6),7,'l');
+		printRight(6,"fail");
 	}
 
 	//M29W128F (2MB)
@@ -939,35 +982,49 @@ int main(void)
 	NOR_Init();
 	NOR_IDTypeDef norid;
 	NOR_ReadID(&norid);
-	LCD_DisplayChar(LINE(7),15,'o');
-	LCD_DisplayChar(LINE(7),7,'k');
+
+	printRight(7, "M29W128F 2MB");
 
 	//HY27UF081G2A (128MB)
 	LCD_DisplayStringLine(LINE(8), " NAND ................................");
 	NAND_Init();
 	NAND_IDTypeDef nandid;
 	NAND_ReadID(&nandid);
-	LCD_DisplayChar(LINE(8),15,'o');
-	LCD_DisplayChar(LINE(8),7,'k');
+	printRight(8, "HY27UF081G2A 128MB");
 
 	LCD_DisplayStringLine(LINE(9), " SDIO ................................");
 	SD_Init();
 	SD_CardInfo cardinfo;
 	SD_GetCardInfo(&cardinfo);
-	LCD_DisplayChar(LINE(9),15,'o');
-	LCD_DisplayChar(LINE(9),7,'k');
+	printRight(9, "ok");
 
 	LCD_DisplayStringLine(LINE(10), " Analog ..............................");
 	Analog_Config();
-	LCD_DisplayChar(LINE(10),15,'o');
-	LCD_DisplayChar(LINE(10),7,'k');
+	printRight(10, "ok");
 
 	LCD_DisplayStringLine(LINE(11), " DAC .................................");
 	DAC_Config();
-	LCD_DisplayChar(LINE(11),15,'o');
-	LCD_DisplayChar(LINE(11),7,'k');
+	printRight(11, "ok");
 
 	f_mount(0, &fatfs);
+
+	LCD_DisplayStringLine(LINE(12), " TEMP ................................");
+	OneWireInit();
+
+	while (1)
+	{
+		RTC_GetTime(&rtc);
+		sprintf(buff, "%04d/%02d/%02d %02d:%02d:%02d", rtc.year, rtc.month, rtc.mday,  rtc.hour, rtc.min, rtc.sec);
+
+		printRight(4, buff);
+
+		float c = Read_Temperature();
+		sprintf(buff, "%.1f", c);
+		printRight(12, buff);
+
+		Delay(900);
+	}
+
 
 	//static char path[1024] = "0:";
 
@@ -976,7 +1033,7 @@ int main(void)
 
 	//LCD_DisplayStringLine(0, (uint8_t*) "Loading...");
 
-	Delay(3000);
+	Delay(5000);
 
 	//int i = 10;
 
@@ -996,7 +1053,7 @@ int main(void)
 			Delay(100);
 		}
 
-		uint32_t ms = millis();
+		//uint32_t ms = millis();
 
 		uint16_t rem = DMA_GetCurrDataCounter(DMA1_Channel1);
 		uint16_t cnt = 0xffff - rem;
@@ -1108,7 +1165,7 @@ int main(void)
 			//Delay(2000);
 		}
 
-		Delay(100 - (millis() - ms));
+		//Delay(100 - (millis() - ms));
 
 		/*
 		 for (int i = 0; i < 0xffff; i++)
@@ -1280,7 +1337,7 @@ int main(void)
 		uint32_t t2 = ms3 - ms2;
 		uint32_t t3 = ms4 - ms3;
 
-		printf("t0: %d t1: %d t2: %d t3: %d\n", t0, t1, t2, t3);
+		//printf("t0: %d t1: %d t2: %d t3: %d\n", t0, t1, t2, t3);
 
 		LCD_WriteReg(3, 0x1018);
 
