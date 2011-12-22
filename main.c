@@ -874,6 +874,8 @@ int main(void)
 
 	char buff[128] = {0};
 
+	Delay_Init();
+
 	USART_STDIO_Init();
 
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_FSMC, ENABLE);
@@ -893,17 +895,17 @@ int main(void)
 	  LCD_WriteRAM(LCD_COLOR_BLACK);
 	}
 
-	LCD_DisplayStringLine(LINE(0), " initializing REDBULL");
+	LCD_DisplayStringLine(LINE(0), (uint8_t*) " initializing REDBULL");
 
-	LCD_DisplayStringLine(LINE(1), " CPU ...............................");
+	LCD_DisplayStringLine(LINE(1), (uint8_t*) " CPU ...............................");
 
-	sprintf(buff, "ARM Cortex-M3 @ %dMHz", SystemCoreClock/1000000);
+	sprintf(buff, "ARM Cortex-M3 @ %dMHz", (int)SystemCoreClock/1000000);
 
 	printRight(1, buff);
 
-	LCD_DisplayStringLine(LINE(2), " LCD ............................320x240");
+	LCD_DisplayStringLine(LINE(2), (uint8_t*) " LCD ............................320x240");
 
-	LCD_DisplayStringLine(LINE(3), " LED ..................................");
+	LCD_DisplayStringLine(LINE(3), (uint8_t*) " LED ..................................");
 	LED_Init();
 
 	toggleLED(LED1_PIN, 0);
@@ -919,7 +921,7 @@ int main(void)
 
 	printRight(3, "5");
 
-	LCD_DisplayStringLine(LINE(4), " RTC ................");
+	LCD_DisplayStringLine(LINE(4), (uint8_t*) " RTC ................");
 	RTC_Init();
 
 
@@ -939,7 +941,7 @@ int main(void)
 
 	printRight(4, buff);
 
-	LCD_DisplayStringLine(LINE(5), " USB .................................");
+	LCD_DisplayStringLine(LINE(5), (uint8_t*) " USB .................................");
 	Set_USBClock();
 	Set_System();
 	USB_Interrupts_Config();
@@ -948,7 +950,7 @@ int main(void)
 	printRight(5, "ok");
 
 //IS61LV25616 (512KB)
-	LCD_DisplayStringLine(LINE(6), " SRAM ................................");
+	LCD_DisplayStringLine(LINE(6), (uint8_t*) " SRAM ................................");
 	SRAM_Init();
 
 	uint32_t* RAM = (uint32_t*) Bank1_SRAM3_ADDR;
@@ -978,7 +980,7 @@ int main(void)
 	}
 
 	//M29W128F (2MB)
-	LCD_DisplayStringLine(LINE(7), " NOR .................................");
+	LCD_DisplayStringLine(LINE(7), (uint8_t*) " NOR .................................");
 	NOR_Init();
 	NOR_IDTypeDef norid;
 	NOR_ReadID(&norid);
@@ -986,29 +988,29 @@ int main(void)
 	printRight(7, "M29W128F 2MB");
 
 	//HY27UF081G2A (128MB)
-	LCD_DisplayStringLine(LINE(8), " NAND ................................");
+	LCD_DisplayStringLine(LINE(8), (uint8_t*) " NAND ................................");
 	NAND_Init();
 	NAND_IDTypeDef nandid;
 	NAND_ReadID(&nandid);
 	printRight(8, "HY27UF081G2A 128MB");
 
-	LCD_DisplayStringLine(LINE(9), " SDIO ................................");
+	LCD_DisplayStringLine(LINE(9), (uint8_t*) " SDIO ................................");
 	SD_Init();
 	SD_CardInfo cardinfo;
 	SD_GetCardInfo(&cardinfo);
 	printRight(9, "ok");
 
-	LCD_DisplayStringLine(LINE(10), " Analog ..............................");
+	LCD_DisplayStringLine(LINE(10), (uint8_t*) " Analog ..............................");
 	Analog_Config();
 	printRight(10, "ok");
 
-	LCD_DisplayStringLine(LINE(11), " DAC .................................");
+	LCD_DisplayStringLine(LINE(11), (uint8_t*) " DAC .................................");
 	DAC_Config();
 	printRight(11, "ok");
 
 	f_mount(0, &fatfs);
 
-	LCD_DisplayStringLine(LINE(12), " TEMP ................................");
+	LCD_DisplayStringLine(LINE(12), (uint8_t*) " TEMP ................................");
 	OneWireInit();
 
 	while (1)
@@ -1297,7 +1299,7 @@ int main(void)
 		//printf("am: %x i/d: %x \n", (r >> 3) & 1, (r >> 4) & 3);
 		//printf("xs: %d xe: %d ys: %d ye: %d \n", LCD_ReadReg(0x50), LCD_ReadReg(0x51), LCD_ReadReg(0x52), LCD_ReadReg(0x53) );
 
-		uint32_t ms0 = millis();
+		//uint32_t ms0 = millis();
 
 		LCD_SetDisplayWindow(0, 0, IMG_HEIGHT - 1, IMG_WIDTH - 1);
 		LCD_WriteReg(3, 0x1038);
@@ -1305,7 +1307,7 @@ int main(void)
 
 		DrawBuffer();
 
-		uint32_t ms1 = millis();
+		//uint32_t ms1 = millis();
 
 		LCD_SetDisplayWindow(0, IMG_WIDTH, IMG_HEIGHT - 1, IMG_WIDTH - 1);
 		LCD_WriteReg(3, 0x1018);
@@ -1313,7 +1315,7 @@ int main(void)
 
 		DrawBuffer();
 
-		uint32_t ms2 = millis();
+		//uint32_t ms2 = millis();
 
 		LCD_SetDisplayWindow(IMG_HEIGHT, 0, IMG_HEIGHT - 1, IMG_WIDTH - 1);
 		LCD_WriteReg(3, 0x1038);
@@ -1321,7 +1323,7 @@ int main(void)
 
 		DrawBuffer();
 
-		uint32_t ms3 = millis();
+		//uint32_t ms3 = millis();
 
 		LCD_SetDisplayWindow(IMG_HEIGHT, IMG_WIDTH, IMG_HEIGHT - 1,
 				IMG_WIDTH - 1);
@@ -1330,12 +1332,12 @@ int main(void)
 
 		DrawBuffer();
 
-		uint32_t ms4 = millis();
+		//uint32_t ms4 = millis();
 
-		uint32_t t0 = ms1 - ms0;
-		uint32_t t1 = ms2 - ms1;
-		uint32_t t2 = ms3 - ms2;
-		uint32_t t3 = ms4 - ms3;
+		//uint32_t t0 = ms1 - ms0;
+		//uint32_t t1 = ms2 - ms1;
+		//uint32_t t2 = ms3 - ms2;
+		//uint32_t t3 = ms4 - ms3;
 
 		//printf("t0: %d t1: %d t2: %d t3: %d\n", t0, t1, t2, t3);
 

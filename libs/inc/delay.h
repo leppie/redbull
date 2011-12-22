@@ -9,10 +9,9 @@
 
 #include "stm32f10x_conf.h"
 
-//void Delay_Init(void);
+void Delay_Init(void);
 void Delay(uint32_t);
-void MicroDelay(uint32_t);
-//uint32_t millis();
+uint32_t millis();
 
 
 #ifdef __cplusplus

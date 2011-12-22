@@ -1,7 +1,5 @@
 #include "one-wire.h"
 #include "stm32f10x.h"
-#include "delay.h"
-#include "stdio.h"
 
 #define FALSE 0
 #define TRUE 1
@@ -36,6 +34,30 @@ unsigned char dscrc_table[] =
 #define PORT	GPIOB
 #define ADDRESS GPIO_Pin_13
 #define PORTADDRESS ADDRESS
+
+#define STM32_DELAY_US_MULT         12
+
+static inline void delay_us(uint32_t us) {
+    us *= STM32_DELAY_US_MULT;
+
+    /* fudge for function call overhead  */
+    us--;
+    asm volatile("   mov r0, %[us]          \n\t"
+                 "1: subs r0, #1            \n\t"
+                 "   bhi 1b                 \n\t"
+                 :
+                 : [us] "r" (us)
+                 : "r0");
+}
+
+static inline void delay_ms( uint32_t ms ) {
+    while (ms--) {
+       delay_us( 1000 );
+    }
+}
+
+#define Delay(x) delay_ms(x)
+#define MicroDelay(x) delay_us(x)
 
 
 GPIO_InitTypeDef GPIO_InitStructure;
