@@ -8,8 +8,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#undef errno
-extern int errno;
+//#undef errno
+//extern int errno;
 extern int  _end;
 
 caddr_t _sbrk ( int incr )
