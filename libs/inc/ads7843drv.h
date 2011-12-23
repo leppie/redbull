@@ -71,18 +71,10 @@ extern coordinate DisplaySample[3];
 
 void TP_Init(void);
 void TP_GetAdXY(int *x,int *y);
-void TP_DrawPoint(u8 x,u16 y);
 void ReBack(void);
-void TP_DrawPoint(u8 x,u16 y);
 coordinate *Read_Ads7846(void);
 unsigned char setCalibrationMatrix( coordinate * displayPtr,coordinate * screenPtr,matrix * matrixPtr);
 unsigned char getDisplayPoint(coordinate * displayPtr,coordinate * screenPtr,matrix * matrixPtr );
-
-u8 TouchX_Penfilter(u16 *px);
-u8 TouchY_Penfilter(u16 *py);
-unsigned char  Touch_Coordinate(void);
-u8 Is_In_Area(u8 x1,u16 y1,u8 x2,u16 y2);
-
 
 
 #endif
