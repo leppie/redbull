@@ -196,6 +196,35 @@
 /**
   * @}
   */ 
+
+ /**
+   * @}
+   */
+
+ /** @addtogroup STM3210E_EVAL_LOW_LEVEL_M25P_FLASH_SPI
+   * @{
+   */
+ /**
+   * @brief  M25P FLASH SPI Interface pins
+   */
+ #define sFLASH_SPI                       SPI1
+ #define sFLASH_SPI_CLK                   RCC_APB2Periph_SPI1
+ #define sFLASH_SPI_SCK_PIN               GPIO_Pin_5                  /* PA.05 */
+ #define sFLASH_SPI_SCK_GPIO_PORT         GPIOA                       /* GPIOA */
+ #define sFLASH_SPI_SCK_GPIO_CLK          RCC_APB2Periph_GPIOA
+ #define sFLASH_SPI_MISO_PIN              GPIO_Pin_6                  /* PA.06 */
+ #define sFLASH_SPI_MISO_GPIO_PORT        GPIOA                       /* GPIOA */
+ #define sFLASH_SPI_MISO_GPIO_CLK         RCC_APB2Periph_GPIOA
+ #define sFLASH_SPI_MOSI_PIN              GPIO_Pin_7                  /* PA.07 */
+ #define sFLASH_SPI_MOSI_GPIO_PORT        GPIOA                       /* GPIOA */
+ #define sFLASH_SPI_MOSI_GPIO_CLK         RCC_APB2Periph_GPIOA
+ #define sFLASH_CS_PIN                    GPIO_Pin_2                  /* PB.02 */
+ #define sFLASH_CS_GPIO_PORT              GPIOB                       /* GPIOB */
+ #define sFLASH_CS_GPIO_CLK               RCC_APB2Periph_GPIOB
+
+ /**
+   * @}
+   */
   
  /** @addtogroup STM3210C_EVAL_LOW_LEVEL_I2C_EE
    * @{
@@ -269,6 +298,8 @@ void SD_LowLevel_Init(void);
 void SD_LowLevel_DMA_TxConfig(uint32_t *BufferSRC, uint32_t BufferSize);
 void SD_LowLevel_DMA_RxConfig(uint32_t *BufferDST, uint32_t BufferSize);
 uint32_t SD_DMAEndOfTransferStatus(void);
+void sFLASH_LowLevel_DeInit(void);
+void sFLASH_LowLevel_Init(void);
 void sEE_LowLevel_DeInit(void);
 void sEE_LowLevel_Init(void);
 void sEE_LowLevel_DMAConfig(uint32_t pBuffer, uint32_t BufferSize, uint32_t Direction);
