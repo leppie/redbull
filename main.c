@@ -83,7 +83,7 @@ void OneWireInit(void)
 	ow_write_byte(0x4e);
 	ow_write_byte(0);
 	ow_write_byte(0);
-	ow_write_byte(0);
+	ow_write_byte(0x60); // 12 bit
 	ow_reset();
 }
 
@@ -863,6 +863,18 @@ void printRight(int line, char* text)
 
 static FATFS fatfs;
 
+const uint16_t STROBE[] =
+{
+	LED1_PIN,
+	LED2_PIN,
+	LED3_PIN,
+	LED4_PIN,
+	LED5_PIN,
+	LED4_PIN,
+	LED3_PIN,
+	LED2_PIN,
+};
+
 /**
  * @brief  Main program.
  * @param  None
@@ -884,6 +896,8 @@ int main(void)
 
 	LCD_SetFont(&Font8x12);
 	LCD_SetColors(LCD_COLOR_WHITE, LCD_COLOR_BLACK);
+
+	LCD_WriteRAM_Prepare();
 
 	for (int i = 0; i < (320 * 240); i++)
 	{
@@ -985,7 +999,7 @@ int main(void)
 	NOR_IDTypeDef norid;
 	NOR_ReadID(&norid);
 
-	printRight(7, "M29W128F 2MB");
+	printRight(7, "MX29LV160D 2MB");
 
 	//HY27UF081G2A (128MB)
 	LCD_DisplayStringLine(LINE(8), (uint8_t*) " NAND ................................");
@@ -1015,16 +1029,21 @@ int main(void)
 
 	while (1)
 	{
-		RTC_GetTime(&rtc);
-		sprintf(buff, "%04d/%02d/%02d %02d:%02d:%02d", rtc.year, rtc.month, rtc.mday,  rtc.hour, rtc.min, rtc.sec);
-
-		printRight(4, buff);
+		uint32_t ms = millis();
 
 		float c = Read_Temperature();
+
+		RTC_GetTime(&rtc);
+
+		sprintf(buff, "%04d/%02d/%02d %02d:%02d:%02d", rtc.year, rtc.month, rtc.mday,  rtc.hour, rtc.min, rtc.sec);
+		printRight(4, buff);
+
 		sprintf(buff, "%.1f", c);
 		printRight(12, buff);
 
-		Delay(900);
+		printf("%s\n", buff);
+
+		Delay(1000 - (millis() - ms));
 	}
 
 

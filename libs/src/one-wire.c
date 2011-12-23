@@ -306,7 +306,7 @@ float Read_Temperature(void)
 	ow_reset();
 	ow_write_byte(0xCC); //Skip ROM
 	ow_write_byte(0x44); // Start Conversion
-	Delay(94);
+	Delay(750);
 	ow_reset();
 	ow_write_byte(0xCC); // Skip ROM
 	ow_write_byte(0xBE); // Read Scratch Pad
