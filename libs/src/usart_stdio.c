@@ -2,6 +2,7 @@
 #ifdef USE_USART_STDIO
 
 #include "stm32f10x.h"
+#include <stdio.h>
 
 
 void USART_STDIO_Init()
@@ -38,6 +39,11 @@ void USART_STDIO_Init()
 
   /* Enable USART */
   USART_Cmd(USART1, ENABLE);
+
+  USART_SendData(USART1, ' ');
+  while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);
+
+  printf("USART stdio initialized\n");
 }
 
 int _write(int file, char *ptr, int len)
