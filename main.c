@@ -427,7 +427,7 @@ int main(void)
 	  LCD_WriteRAM(LCD_COLOR_BLACK);
 	}
 
-	/*
+/*
 	TP_Init();
 
 	int x, y;
@@ -438,8 +438,19 @@ int main(void)
 		int irq = !GPIO_ReadInputDataBit(GPIOG, GPIO_Pin_7);
 		if (irq)
 		{
+			GPIO_InitTypeDef GPIO_InitStructure;
+
+			GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+			GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+			GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+			GPIO_Init(GPIOG, &GPIO_InitStructure);
+
+			GPIO_ResetBits(GPIOG, GPIO_Pin_7);
 			TP_GetAdXY(&x, &y);
 			printf("irq: %d x: %d y: %d\n", irq, x , y);
+
+			GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+			GPIO_Init(GPIOG, &GPIO_InitStructure);
 		}
 
 
