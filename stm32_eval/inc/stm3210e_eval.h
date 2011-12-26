@@ -121,7 +121,7 @@
 #define USER1_BUTTON_EXTI_LINE           EXTI_Line8
 #define USER1_BUTTON_EXTI_PORT_SOURCE    GPIO_PortSourceGPIOA
 #define USER1_BUTTON_EXTI_PIN_SOURCE     GPIO_PinSource8
-#define USER1_BUTTON_EXTI_IRQn           EXTI9_5_IRQn
+#define USER1_BUTTON_EXTI_IRQn           EXTI9_5_IRQn // TODO: fix
 /**
  * @brief User 2 push-button
  */
@@ -131,7 +131,7 @@
 #define USER2_BUTTON_EXTI_LINE           EXTI_Line3
 #define USER2_BUTTON_EXTI_PORT_SOURCE    GPIO_PortSourceGPIOD
 #define USER2_BUTTON_EXTI_PIN_SOURCE     GPIO_PinSource3
-#define USER2_BUTTON_EXTI_IRQn           EXTI15_10_IRQn
+#define USER2_BUTTON_EXTI_IRQn           EXTI15_10_IRQn // TODO: fix
       
 /**
   * @}
@@ -218,9 +218,9 @@
  #define sFLASH_SPI_MOSI_PIN              GPIO_Pin_7                  /* PA.07 */
  #define sFLASH_SPI_MOSI_GPIO_PORT        GPIOA                       /* GPIOA */
  #define sFLASH_SPI_MOSI_GPIO_CLK         RCC_APB2Periph_GPIOA
- #define sFLASH_CS_PIN                    GPIO_Pin_2                  /* PB.02 */
- #define sFLASH_CS_GPIO_PORT              GPIOB                       /* GPIOB */
- #define sFLASH_CS_GPIO_CLK               RCC_APB2Periph_GPIOB
+ #define sFLASH_CS_PIN                    GPIO_Pin_4                  /* PA.04 */
+ #define sFLASH_CS_GPIO_PORT              GPIOA                       /* GPIOA */
+ #define sFLASH_CS_GPIO_CLK               RCC_APB2Periph_GPIOA
 
  /**
    * @}
@@ -237,7 +237,7 @@
  #define sEE_I2C_SCL_PIN                  GPIO_Pin_6                  /* PB.06 */
  #define sEE_I2C_SCL_GPIO_PORT            GPIOB                       /* GPIOB */
  #define sEE_I2C_SCL_GPIO_CLK             RCC_APB2Periph_GPIOB
- #define sEE_I2C_SDA_PIN                  GPIO_Pin_7                  /* PB.07 */
+ #define sEE_I2C_SDA_PIN                  GPIO_Pin_7                  /* PB.07  */
  #define sEE_I2C_SDA_GPIO_PORT            GPIOB                       /* GPIOB */
  #define sEE_I2C_SDA_GPIO_CLK             RCC_APB2Periph_GPIOB
  #define sEE_M24C64_32

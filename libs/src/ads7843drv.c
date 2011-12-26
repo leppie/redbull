@@ -23,18 +23,32 @@ coordinate DisplaySample[3] =
 
 void TP_Init(void)
 {
+	RCC_AHBPeriphClockCmd(RCC_APB2Periph_GPIOB | RCC_APB2Periph_GPIOG, ENABLE);
 	// IODIR1 = 0x00;
 	//  IODIR1 = IODIR1 | MASK_CS | MASK_DCLK | MASK_DIN;
 	GPIO_InitTypeDef GPIO_InitStructure;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15 | GPIO_Pin_13 | GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15 | GPIO_Pin_13;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP; //ÍÆÍì
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; //ÍÆÍì
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(GPIOG, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOG, &GPIO_InitStructure);
+
+
+
 
 }
 
@@ -42,13 +56,13 @@ void Delayus(int k)
 {
 	int j;
 	for (j = k; j > 0; j--)
-		;
+		asm volatile ("nop");
 }
 //====================================================================================
 void ReBack()
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_15;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15 | GPIO_Pin_13 | GPIO_Pin_12;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
@@ -77,6 +91,7 @@ static unsigned short RD_AD(void)
 	unsigned short buf = 0, temp;
 	unsigned char i;
 	TP_DIN(0);
+	Delayus(5);
 	TP_DCLK(1);
 	for (i = 0; i < 12; i++)
 	{
@@ -86,6 +101,13 @@ static unsigned short RD_AD(void)
 		temp = (TP_DOUT) ? 1 : 0;
 		buf |= (temp << (11 - i));
 
+		//Delayus(5);
+		TP_DCLK(1);
+	}
+	for (; i < 16; i++)
+	{
+		Delayus(5);
+		TP_DCLK(0);
 		Delayus(5);
 		TP_DCLK(1);
 	}

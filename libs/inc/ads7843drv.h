@@ -44,7 +44,7 @@ extern coordinate ScreenSample[3];
 extern coordinate DisplaySample[3];
 // A/D 通道选择命令字和工作寄存器
 #define	CHX 	0x90 	//通道Y+的选择控制字	
-#define	CHY 	0xd0	//通道X+的选择控制字 
+#define	CHY 	0xd0	//通道X+的选择控制字
 
 #define TP_DCLK(a)	\
 						if (a)	\
