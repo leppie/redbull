@@ -29,7 +29,7 @@
 								<option id="gnu.cpp.compiler.option.debugging.level.1975013306" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 							</tool>
 							<tool command="arm-none-eabi-gcc" errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.tool.gnu.c.compiler.base.139179046" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
-								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.1872954117" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.size" valueType="enumerated"/>
+								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.1872954117" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.893451030" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1598765256" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
@@ -73,77 +73,6 @@
 							<tool command="arm-none-eabi-as" errorParsers="org.eclipse.cdt.core.GASErrorParser" id="cdt.managedbuild.tool.gnu.assembler.base.1209661082" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base">
 								<option id="gnu.both.asm.option.flags.1069601769" name="Assembler flags" superClass="gnu.both.asm.option.flags" value="-g" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1410652552" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-							</tool>
-						</toolChain>
-					</folderInfo>
-					<fileInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.1742905765.1332524990.679753865.594743141.626018801" name="stm3210e_eval_lcd.c" rcbsApplicability="disable" resourcePath="stm32_eval/src/stm3210e_eval_lcd.c" toolsToInvoke="cdt.managedbuild.tool.gnu.c.compiler.base.139179046.2100028348">
-						<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.139179046.2100028348" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.139179046">
-							<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.323766339" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-						</tool>
-						<tool customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.428683822" name="Resource Custom Build Step">
-							<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.650536535" name="Resource Custom Build Step Input Type">
-								<additionalInput kind="additionalinputdependency"/>
-							</inputType>
-							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.1569007411" name="Resource Custom Build Step Output Type"/>
-						</tool>
-					</fileInfo>
-					<folderInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.1742905765.1332524990.679753865.594743141.1340860261" name="/" resourcePath="stm_lib">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.base.1960740253" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.base" unusedChildren="">
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.archiver.base.1481075303" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.462689171"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1166616167" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.672873932"/>
-							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.453195444" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.139179046">
-								<option id="gnu.c.compiler.option.optimization.level.1986087418" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.more" valueType="enumerated"/>
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.408618081" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.c.linker.base.209444970" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base.1744567424"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.617157681" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base.486793549"/>
-							<tool id="cdt.managedbuild.tool.gnu.assembler.base.334255575" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base.1209661082">
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1383326248" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-							</tool>
-						</toolChain>
-					</folderInfo>
-					<folderInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.1742905765.1332524990.679753865.594743141.1046662499" name="/" resourcePath="cmsis">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.base.816147927" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.base" unusedChildren="">
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.archiver.base.1605638721" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.462689171"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1498123300" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.672873932"/>
-							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1263443301" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.139179046">
-								<option id="gnu.c.compiler.option.optimization.level.823337465" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.more" valueType="enumerated"/>
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.839443903" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.c.linker.base.120255846" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base.1744567424"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.1519451259" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base.486793549"/>
-							<tool id="cdt.managedbuild.tool.gnu.assembler.base.1828698606" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base.1209661082">
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.100199012" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
-							</tool>
-						</toolChain>
-					</folderInfo>
-					<fileInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.1742905765.1332524990.679753865.594743141.2085307152" name="main.c" rcbsApplicability="disable" resourcePath="main.c" toolsToInvoke="cdt.managedbuild.tool.gnu.c.compiler.base.139179046.633275661">
-						<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.139179046.633275661" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.139179046">
-							<option id="gnu.c.compiler.option.optimization.level.1196524184" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.none" valueType="enumerated"/>
-							<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1983736915" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-						</tool>
-						<tool customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.606622563" name="Resource Custom Build Step">
-							<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.1542401409" name="Resource Custom Build Step Input Type">
-								<additionalInput kind="additionalinputdependency" paths=""/>
-							</inputType>
-							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.682638271" name="Resource Custom Build Step Output Type"/>
-						</tool>
-					</fileInfo>
-					<folderInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.1742905765.1332524990.679753865.594743141.1412305705" name="/" resourcePath="cmsis_boot">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.base.1225858323" name="Linux GCC" superClass="cdt.managedbuild.toolchain.gnu.base" unusedChildren="">
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.archiver.base.830354730" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base.462689171"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1554766062" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base.672873932"/>
-							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.1667746806" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.139179046">
-								<option id="gnu.c.compiler.option.optimization.level.1878054783" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.more" valueType="enumerated"/>
-								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1576393537" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
-							</tool>
-							<tool id="cdt.managedbuild.tool.gnu.c.linker.base.444473475" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base.1744567424"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.897464424" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base.486793549"/>
-							<tool id="cdt.managedbuild.tool.gnu.assembler.base.208247334" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base.1209661082">
-								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.206190809" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
 						</toolChain>
 					</folderInfo>
