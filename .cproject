@@ -33,6 +33,7 @@
 								<option id="gnu.c.compiler.option.debugging.level.893451030" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1598765256" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
+									<listOptionValue builtIn="false" value="__ARM_ARCH_7M__"/>
 									<listOptionValue builtIn="false" value="nUSE_FULL_ASSERT"/>
 									<listOptionValue builtIn="false" value="USE_USART_STDIO"/>
 									<listOptionValue builtIn="false" value="nUSE_USB_STDIO"/>
@@ -5173,4 +5174,5 @@
 	<storageModule moduleId="refreshScope" versionNumber="1">
 		<resource resourceType="PROJECT" workspacePath="/redbull"/>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>
