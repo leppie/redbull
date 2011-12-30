@@ -29,10 +29,11 @@
 								<option id="gnu.cpp.compiler.option.debugging.level.1975013306" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 							</tool>
 							<tool command="arm-none-eabi-gcc" errorParsers="org.eclipse.cdt.core.GCCErrorParser" id="cdt.managedbuild.tool.gnu.c.compiler.base.139179046" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
-								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.1872954117" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.none" valueType="enumerated"/>
+								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.1872954117" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.size" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.893451030" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1598765256" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
+									<listOptionValue builtIn="false" value="ARM_MATH_CM3"/>
 									<listOptionValue builtIn="false" value="__ARM_ARCH_7M__"/>
 									<listOptionValue builtIn="false" value="nUSE_FULL_ASSERT"/>
 									<listOptionValue builtIn="false" value="USE_USART_STDIO"/>
@@ -49,8 +50,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/cmsis_boot}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/stm_lib/inc}&quot;"/>
 								</option>
-								<option id="gnu.c.compiler.option.misc.other.1321181699" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -mcpu=cortex-m3 -mthumb -std=gnu99 -Wextra -Wformat-security -Wno-unused-parameter -Wbad-function-cast" valueType="string"/>
-								<option id="gnu.c.compiler.option.optimization.flags.542461623" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-ffast-math  -ffunction-sections -fdata-sections" valueType="string"/>
+								<option id="gnu.c.compiler.option.misc.other.1321181699" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0 -mcpu=cortex-m3 -mthumb -std=gnu99 -Wformat-security -Wno-unused-parameter -Wbad-function-cast" valueType="string"/>
+								<option id="gnu.c.compiler.option.optimization.flags.542461623" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-ffast-math  -ffunction-sections -fdata-sections -ftree-vectorize -fno-strict-aliasing" valueType="string"/>
 								<option id="gnu.c.compiler.option.debugging.other.1030470579" name="Other debugging flags" superClass="gnu.c.compiler.option.debugging.other" value="-gdwarf-2" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1469768882" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
@@ -77,6 +78,18 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.1742905765.1332524990.679753865.594743141.955902630" name="main.c" rcbsApplicability="disable" resourcePath="main.c" toolsToInvoke="cdt.managedbuild.tool.gnu.c.compiler.base.139179046.799500458">
+						<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.139179046.799500458" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.139179046">
+							<option id="gnu.c.compiler.option.optimization.level.208454795" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.none" valueType="enumerated"/>
+							<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.317003190" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+						</tool>
+						<tool customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.895656473" name="Resource Custom Build Step">
+							<inputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.inputtype.1924286040" name="Resource Custom Build Step Input Type">
+								<additionalInput kind="additionalinputdependency" paths=""/>
+							</inputType>
+							<outputType id="org.eclipse.cdt.managedbuilder.ui.rcbs.outputtype.374163790" name="Resource Custom Build Step Output Type"/>
+						</tool>
+					</fileInfo>
 					<sourceEntries>
 						<entry excluding="test.cpp|libdcc/example.c|cmsis_boot/startup/startup_stm32f10x_md.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
