@@ -35,7 +35,7 @@
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
 									<listOptionValue builtIn="false" value="ARM_MATH_CM3"/>
 									<listOptionValue builtIn="false" value="__ARM_ARCH_7M__"/>
-									<listOptionValue builtIn="false" value="nUSE_FULL_ASSERT"/>
+									<listOptionValue builtIn="false" value="USE_FULL_ASSERT"/>
 									<listOptionValue builtIn="false" value="USE_USART_STDIO"/>
 									<listOptionValue builtIn="false" value="nUSE_USB_STDIO"/>
 									<listOptionValue builtIn="false" value="USE_Delay"/>
@@ -60,11 +60,13 @@
 								<option id="gnu.c.link.option.ldflags.1827492400" name="Linker flags" superClass="gnu.c.link.option.ldflags" value="-Wl,-Map=${ProjName}.map -Wl,--gc-sections -Wl,-Tstm32_flash.ld -mcpu=cortex-m3 -mthumb -g3 -gdwarf-2" valueType="string"/>
 								<option id="gnu.c.link.option.paths.1459612513" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DSP_M3/Debug}&quot;"/>
 								</option>
 								<option id="gnu.c.link.option.other.1814920566" name="Other options (-Xlinker [option])" superClass="gnu.c.link.option.other"/>
 								<option id="gnu.c.link.option.strip.537585137" name="Omit all symbol information (-s)" superClass="gnu.c.link.option.strip" value="false" valueType="boolean"/>
 								<option id="gnu.c.link.option.libs.895953495" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="m"/>
+									<listOptionValue builtIn="false" value="DSP_M3"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1094738728" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -91,7 +93,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="test.cpp|libdcc/example.c|cmsis_boot/startup/startup_stm32f10x_md.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="cmsis/DSP_Lib|test.cpp|libdcc/example.c|cmsis_boot/startup/startup_stm32f10x_md.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
