@@ -13,6 +13,8 @@
 #include "numbers.h"
 #include "one-wire.h"
 #include "ads7843drv.h"
+#include "rtc.h"
+#include "arm_math.h"
 
 void OneWireInit(void)
 {
@@ -191,10 +193,19 @@ TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-const uint16_t Sine12bit[32] = { 2047, 2447, 2831, 3185, 3498, 3750, 3939, 4056, 4095, 4056, 3939, 3750, 3495, 3185,
-    2831, 2447, 2047, 1647, 1263, 909, 599, 344, 155, 38, 0, 38, 155, 344, 599, 909, 1263, 1647 };
+//const uint16_t Sine12bit[32] = { 2047, 2447, 2831, 3185, 3498, 3750, 3939, 4056, 4095, 4056, 3939, 3750, 3495, 3185,
+//    2831, 2447, 2047, 1647, 1263, 909, 599, 344, 155, 38, 0, 38, 155, 344, 599, 909, 1263, 1647 };
 
-uint16_t ModSine12bit[32];
+const uint16_t Sine12bit[128] = { 2048, 2148, 2248, 2348, 2447, 2545, 2642, 2737, 2831, 2923, 3013, 3100, 3185, 3267,
+    3346, 3423, 3495, 3565, 3630, 3692, 3750, 3804, 3853, 3898, 3939, 3975, 4007, 4034, 4056, 4073, 4085, 4093, 4095,
+    4093, 4085, 4073, 4056, 4034, 4007, 3975, 3939, 3898, 3853, 3804, 3750, 3692, 3630, 3565, 3495, 3423, 3346, 3267,
+    3185, 3100, 3013, 2923, 2831, 2737, 2642, 2545, 2447, 2348, 2248, 2148, 2048, 1947, 1847, 1747, 1648, 1550, 1453,
+    1358, 1264, 1172, 1082, 995, 910, 828, 749, 672, 600, 530, 465, 403, 345, 291, 242, 197, 156, 120, 88, 61, 39, 22,
+    10, 2, 0, 2, 10, 22, 39, 61, 88, 120, 156, 197, 242, 291, 345, 403, 465, 530, 600, 672, 749, 828, 910, 995, 1082,
+    1172, 1264, 1358, 1453, 1550, 1648, 1747, 1847, 1947 };
+
+
+uint16_t ModSine12bit[128];
 uint8_t Idx = 0;
 
 /**
@@ -241,7 +252,7 @@ void DAC_Config(void)
   DAC_GPIO_Configuration();
 
   /* TIM6 Configuration */
-  TIM_PrescalerConfig(TIM6, 0xF, TIM_PSCReloadMode_Update);
+  TIM_PrescalerConfig(TIM6, 0x3, TIM_PSCReloadMode_Update);
   TIM_SetAutoreload(TIM6, 0xF);
   /* TIM6 TRGO selection */
   TIM_SelectOutputTrigger(TIM6, TIM_TRGOSource_Update);
@@ -252,7 +263,7 @@ void DAC_Config(void)
   DAC_InitStructure.DAC_OutputBuffer = DAC_OutputBuffer_Disable;
   DAC_Init(DAC_Channel_1, &DAC_InitStructure);
 
-  for (int i = 0; i < 32; i++)
+  for (int i = 0; i < 128; i++)
   {
     ModSine12bit[i] = Sine12bit[i] / 2 + 1023;
   }
@@ -262,7 +273,7 @@ void DAC_Config(void)
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t) &DAC->DHR12R1;
   DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t) &ModSine12bit;
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
-  DMA_InitStructure.DMA_BufferSize = 32;
+  DMA_InitStructure.DMA_BufferSize = 128;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
   DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
@@ -287,19 +298,7 @@ void DAC_Config(void)
 }
 
 
-void Button_GPIO_Config(void)
-{
-  /* GPIOA Periph clock enable */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-
-  GPIO_InitTypeDef GPIO_InitStructure;
-
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-}
-
-void RGBLED_GPIO_Config(void)
+void RGBLED_GPIO_Config(uint16_t PrescalerValue)
 {
   /* GPIOA Periph clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
@@ -316,16 +315,8 @@ void RGBLED_GPIO_Config(void)
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
-  TIM_OCInitTypeDef TIM_OCInitStructure;
-
-  uint16_t GREEN_Val = 66;
-  uint16_t BLUE_Val = 165;
-  uint16_t RED_Val = 332;
-
-  uint16_t PrescalerValue = 0;
-
   TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
-  TIM_OCStructInit(&TIM_OCInitStructure);
+
 
   /* -----------------------------------------------------------------------
    TIM3 Configuration: generate 4 PWM signals with 4 different duty cycles:
@@ -343,14 +334,27 @@ void RGBLED_GPIO_Config(void)
    TIM1 Channel3 duty cycle = (TIM3_CCR3/ TIM3_ARR)* 100 = 25%
    ----------------------------------------------------------------------- */
   /* Compute the prescaler value */
-  PrescalerValue = (uint16_t) (SystemCoreClock / 24000000) - 1;
+  //uint16_t PrescalerValue = (uint16_t) (SystemCoreClock / 24000000) - 1;
   /* Time base configuration */
-  TIM_TimeBaseStructure.TIM_Period = 665;
+  TIM_TimeBaseStructure.TIM_Period = 255;
   TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 
   TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+
+  TIM_ARRPreloadConfig(TIM3, ENABLE);
+
+  /* TIM3 enable counter */
+  TIM_Cmd(TIM3, ENABLE);
+}
+
+void RGBLED_Update(uint8_t RED_Val, uint8_t GREEN_Val, uint8_t BLUE_Val)
+{
+  //printf("r: %x g: %x b:%x\n", RED_Val, GREEN_Val, BLUE_Val);
+  TIM_OCInitTypeDef TIM_OCInitStructure;
+
+  TIM_OCStructInit(&TIM_OCInitStructure);
 
   /* PWM1 Mode configuration: Channel1 */
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
@@ -377,11 +381,42 @@ void RGBLED_GPIO_Config(void)
   TIM_OC3Init(TIM3, &TIM_OCInitStructure);
 
   TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
+}
 
-  TIM_ARRPreloadConfig(TIM3, ENABLE);
+uint32_t HSV_to_RGB( float h, float s, float v ) {
+#define long(v) ((uint32_t)(v))
+#define RGB(r,g,b) (long(r * 255 ) * 65536 + long(g * 255 ) * 256 + long(b * 255))
+  /* modified from Alvy Ray Smith's site: http://www.alvyray.com/Papers/hsv2rgb.htm */
+  // H is given on [0, 6]. S and V are given on [0, 1].
+  // RGB is returned as a 24-bit long #rrggbb
+  int i;
+  float m, n, f;
 
-  /* TIM3 enable counter */
-  TIM_Cmd(TIM3, ENABLE);
+  // not very elegant way of dealing with out of range: return black
+  if ((s<0.0) || (s>1.0) || (v<1.0) || (v>1.0)) {
+    return 0L;
+  }
+
+  if ((h < 0.0) || (h > 6)) {
+    return RGB(v,v,v);
+  }
+  i = floorf(h);
+  f = h - i;
+  if ( !(i&1) ) {
+    f = 1 - f; // if i is even
+  }
+  m = v * (1 - s);
+  n = v * (1 - s * f);
+  switch (i) {
+    case 6:
+    case 0:    return RGB(v,n,m);
+    case 1:    return RGB(n,v,m);
+    case 2:    return RGB(m,v,n);
+    case 3:    return RGB(m,n,v);
+    case 4:    return RGB(n,m,v);
+    case 5:    return RGB(v,m,n);
+  }
+  return -1;
 }
 
 static FATFS fatfs;
@@ -405,23 +440,36 @@ int main(void)
   LCD_DisplayStringLine(LINE(10), (uint8_t*) " Analog ..............................");
   Analog_Config();
   printRight(10, "ok");
+
   LCD_DisplayStringLine(LINE(11), (uint8_t*) " DAC .................................");
   DAC_Config();
   printRight(11, "ok");
+
   f_mount(0, &fatfs);
+
   LCD_DisplayStringLine(LINE(12), (uint8_t*) " TEMP ................................");
   OneWireInit();
   float c = Read_Temperature();
   sprintf(buff, "%.1f", c);
   printRight(12, buff);
   printf("%s\n", buff);
-  Button_GPIO_Config();
-  RGBLED_GPIO_Config();
+
+  RGBLED_GPIO_Config(0xff);
+
+  RGBLED_Update(0xff,0xff,0xff);
+  Delay(200);
+  RGBLED_Update(0xff,0,0);
+  Delay(200);
+  RGBLED_Update(0,0xff,0);
+  Delay(200);
+  RGBLED_Update(0,0,0xff);
+  Delay(200);
+  RGBLED_Update(0,0,0);
+
   //static char path[1024] = "0:";
   //LCD_Clear(LCD_COLOR_BLUE);
   //LCD_DisplayStringLine(0, (uint8_t*) "Loading...");
   Delay(1000);
-
 
   //int i = 10;
 
@@ -431,7 +479,11 @@ int main(void)
   LCD_WriteReg(3, 0x1000);
   LCD_WriteRAM_Prepare();
 
+
+
   DMARead();
+
+  float h = 0, s = 1, v = 1;
 
   while (1)
   {
@@ -446,27 +498,86 @@ int main(void)
     uint16_t rem = DMA_GetCurrDataCounter(DMA1_Channel1);
     uint16_t cnt = 0xffff - rem;
 
-    if (cnt >= 80 && cnt < 160)
+    if (cnt >= 80 && cnt < 512)
     {
       continue;
     }
 
     uint32_t buff[160] = { 0 };
 
-    uint16_t tillend = cnt > 160 ? 160 : cnt;
-    uint16_t fromstart = 160 - tillend;
 
-    uint16_t bcnt = cnt - 160;
-
-    // before
-    SRAM_ReadBuffer((uint16_t*) &buff[0], bcnt * 4, tillend * 2);
-    // after
-    if (fromstart)
+    if (GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_3) == RESET)
     {
-      SRAM_ReadBuffer((uint16_t*) &buff[tillend], 0, fromstart * 2);
+      // do fft
+      uint16_t sbuf[1024] = {0};
+
+      uint16_t tillend = cnt > 1024 ? 1024 : cnt;
+      uint16_t fromstart = 1024 - tillend;
+
+      uint16_t bcnt = cnt - 1024;
+
+      // before
+      SRAM_ReadBuffer(&sbuf[0], bcnt, tillend);
+      // after
+      if (fromstart)
+      {
+        SRAM_ReadBuffer(&sbuf[tillend], 0, fromstart);
+      }
+
+      float32_t input[2048], output[1024];
+
+      for (int i = 0; i < 1024; i++)
+      {
+        input[i * 2] = (sbuf[i]/2048.0f) - 1;
+        input[i * 2 + 1] = 0;
+      }
+
+      arm_cfft_radix4_instance_f32 S;
+      arm_cfft_radix4_init_f32(&S, 1024, 0, 0);
+
+      arm_cfft_radix4_f32(&S, input);
+
+      arm_cmplx_mag_f32(input, output, 1024);
+
+      for (int i = 0; i < 1024; i++)
+      {
+        sbuf[i] = (uint16_t) (output[i]);
+      }
+
+      for (int i = 0; i < 256; i++)
+      {
+        ((uint16_t*) buff)[i] = (sbuf[4 * i] + sbuf[4 * i + 1] + sbuf[4 * i + 2] + sbuf[4 * i + 3]) >> 2;
+      }
+
+      bcnt = 0;
+/*
+      for (int i = 0; i < 512; i++)
+      {
+        sbuf[i] = (uint16_t) ((output[i] + output[1023 - i]) * 16);
+      }
+      for (int i = 512; i < 1024 ; i++)
+      {
+        sbuf[i] = 0;
+      }
+*/
+      // profit!
+    }
+    else
+    {
+      uint16_t tillend = cnt > 160 ? 160 : cnt;
+      uint16_t fromstart = 160 - tillend;
+
+      uint16_t bcnt = cnt - 160;
+
+      // before
+      SRAM_ReadBuffer((uint16_t*) &buff[0], bcnt * 4, tillend * 2);
+      // after
+      if (fromstart)
+      {
+        SRAM_ReadBuffer((uint16_t*) &buff[tillend], 0, fromstart * 2);
+      }
     }
 
-    int halt = 0;
     uint8_t prevsv = 0;
 
     for (uint16_t i = 0; i < 320; i++)
@@ -495,8 +606,6 @@ int main(void)
       {
         prevsv = sv;
       }
-
-      //halt |= (val > 1126);
 
       uint16_t pbuf[240];
 
@@ -536,6 +645,25 @@ int main(void)
 
       DMA_Cmd(DMA2_Channel5, ENABLE);
 
+      RTC_t rtc;
+      RTC_GetTime(&rtc);
+
+#define HUE_MAX 6.0f
+#define HUE_DELTA 0.0001f
+
+      h += HUE_DELTA;
+      if (h > HUE_MAX)
+      {
+        h = 0;
+      }
+
+      uint32_t rgb = HSV_to_RGB(h,s,v);
+      uint8_t* k = (uint8_t*) &rgb;
+
+      RGBLED_Update(k[2],k[1],k[0]);
+
+      //RGBLED_Update((rtc.min & 1) ? 0 : (rtc.hour * 10), ((rtc.sec >> 2) & 1) ? 0 : (rtc.min * 4), rtc.sec * 4);
+
       while (!DMA_GetFlagStatus(DMA2_FLAG_TC5))
         ;
 
@@ -544,15 +672,7 @@ int main(void)
       while (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == RESET)
         ;
 
-      //Delay(100);
     }
-
-    if (halt)
-    {
-      printf("rem: %d cnt: %d tillend: %d fromstart: %d bcnt: %d halt: %d\n", rem, cnt, tillend, fromstart, bcnt, halt);
-      //Delay(2000);
-    }
-
   }
 }
 

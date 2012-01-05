@@ -1,11 +1,11 @@
 /**
   ******************************************************************************
-  * @file    Project/STM32F10x_StdPeriph_Template/stm32f10x_it.c 
+  * @file    Project/STM32F10x_StdPeriph_Template/stm32f10x_it.c
   * @author  MCD Application Team
   * @version V3.3.0
   * @date    04/16/2010
   * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and 
+  *          This file provides template for all exceptions handler and
   *          peripherals interrupt service routine.
   ******************************************************************************
   * @copy
@@ -18,7 +18,7 @@
   * CODING INFORMATION CONTAINED HEREIN IN CONNECTION WITH THEIR PRODUCTS.
   *
   * <h2><center>&copy; COPYRIGHT 2010 STMicroelectronics</center></h2>
-  */ 
+  */
 
 
 /* Includes ------------------------------------------------------------------*/
@@ -157,9 +157,56 @@ void SysTick_Handler(void)
 
 /**
   * @}
-  */ 
+  */
 
+extern void HandleWakeupButtonPress(void) __attribute__ ((weak));
+extern void HandleTamperButtonPress(void) __attribute__ ((weak));
+extern void HandleUser1ButtonPress(void) __attribute__ ((weak));
+extern void HandleUser2ButtonPress(void)__attribute__ ((weak));
 
+void EXTI0_IRQHandler(void)
+{
+  if(EXTI_GetITStatus(EXTI_Line0) != RESET)
+  {
+    if (HandleWakeupButtonPress)
+      HandleWakeupButtonPress();
+
+    EXTI_ClearITPendingBit(EXTI_Line0);
+  }
+}
+
+void EXTI3_IRQHandler(void)
+{
+  if(EXTI_GetITStatus(EXTI_Line3) != RESET)
+  {
+    if (HandleUser2ButtonPress)
+      HandleUser2ButtonPress();
+
+    EXTI_ClearITPendingBit(EXTI_Line3);
+  }
+}
+
+void EXTI9_5_IRQHandler(void)
+{
+  if(EXTI_GetITStatus(EXTI_Line8) != RESET)
+  {
+    if (HandleUser1ButtonPress)
+      HandleUser1ButtonPress();
+
+    EXTI_ClearITPendingBit(EXTI_Line8);
+  }
+}
+
+void EXTI15_10_IRQHandler(void)
+{
+  if(EXTI_GetITStatus(EXTI_Line13) != RESET)
+  {
+    if(HandleTamperButtonPress)
+      HandleTamperButtonPress();
+
+    EXTI_ClearITPendingBit(EXTI_Line13);
+  }
+}
 
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {

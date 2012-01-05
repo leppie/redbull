@@ -65,8 +65,8 @@
 								<option id="gnu.c.link.option.other.1814920566" name="Other options (-Xlinker [option])" superClass="gnu.c.link.option.other"/>
 								<option id="gnu.c.link.option.strip.537585137" name="Omit all symbol information (-s)" superClass="gnu.c.link.option.strip" value="false" valueType="boolean"/>
 								<option id="gnu.c.link.option.libs.895953495" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="m"/>
 									<listOptionValue builtIn="false" value="DSP_M3"/>
+									<listOptionValue builtIn="false" value="m"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1094738728" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -83,6 +83,7 @@
 					<fileInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.1742905765.1332524990.679753865.594743141.955902630" name="main.c" rcbsApplicability="disable" resourcePath="main.c" toolsToInvoke="cdt.managedbuild.tool.gnu.c.compiler.base.139179046.799500458">
 						<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.139179046.799500458" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base.139179046">
 							<option id="gnu.c.compiler.option.optimization.level.208454795" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" value="gnu.c.optimization.level.none" valueType="enumerated"/>
+							<option id="gnu.c.compiler.option.optimization.flags.1503381013" name="Other optimization flags" superClass="gnu.c.compiler.option.optimization.flags" value="-ffast-math  -ffunction-sections -fdata-sections -ftree-vectorize -fno-strict-aliasing" valueType="string"/>
 							<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.317003190" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 						</tool>
 						<tool customBuildStep="true" id="org.eclipse.cdt.managedbuilder.ui.rcbs.895656473" name="Resource Custom Build Step">
