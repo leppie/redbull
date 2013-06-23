@@ -20,12 +20,12 @@
 
 void LED_On(uint16_t leds)
 {
-  LED_PORT->ODR = ~leds;
+  LED_PORT->ODR &= ~leds;
 }
 
 void LED_Off(uint16_t leds)
 {
-  LED_PORT->ODR = leds;
+  LED_PORT->ODR |= leds;
 }
 
 void LED_Init(void)
@@ -87,7 +87,7 @@ void Button_GPIO_Config(void)
   /* Configure EXTI0 line */
   EXTI_InitStructure.EXTI_Line = EXTI_Line0 | EXTI_Line3 | EXTI_Line8 | EXTI_Line13;
   EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
-  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
   EXTI_InitStructure.EXTI_LineCmd = ENABLE;
   EXTI_Init(&EXTI_InitStructure);
 
@@ -111,24 +111,45 @@ void Button_GPIO_Config(void)
 }
 
 
-void HandleWakeupButtonPress(void)
+void HandleWakeupButtonDown(void)
 {
   LED_On(LED(1));
 }
 
-void HandleTamperButtonPress(void)
+void HandleWakeupButtonUp(void)
+{
+  LED_Off(LED(1));
+}
+
+
+void HandleTamperButtonDown(void)
 {
   LED_On(LED(2));
 }
 
-void HandleUser1ButtonPress(void)
+void HandleTamperButtonUp(void)
+{
+  LED_Off(LED(2));
+}
+
+void HandleUser1ButtonDown(void)
 {
   LED_On(LED(3));
 }
 
-void HandleUser2ButtonPress(void)
+void HandleUser1ButtonUp(void)
+{
+  LED_Off(LED(3));
+}
+
+void HandleUser2ButtonDown(void)
 {
   LED_On(LED(4));
+}
+
+void HandleUser2ButtonUp(void)
+{
+  LED_Off(LED(4));
 }
 
 
@@ -179,35 +200,7 @@ void Redbull_Init()
   {
     LCD_WriteRAM(LCD_COLOR_BLACK);
   }
-  /*
-   TP_Init();
 
-   int x, y;
-   TP_GetAdXY(&x, &y);
-
-   while(1)
-   {
-   int irq = !GPIO_ReadInputDataBit(GPIOG, GPIO_Pin_7);
-   if (irq)
-   {
-   GPIO_InitTypeDef GPIO_InitStructure;
-
-   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
-   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-   GPIO_Init(GPIOG, &GPIO_InitStructure);
-
-   GPIO_ResetBits(GPIOG, GPIO_Pin_7);
-   TP_GetAdXY(&x, &y);
-   printf("irq: %d x: %d y: %d\n", irq, x , y);
-
-   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-   GPIO_Init(GPIOG, &GPIO_InitStructure);
-   }
-
-
-   }
-   */
   LCD_DisplayStringLine(LINE(0), (uint8_t*) " initializing REDBULL");
   LCD_DisplayStringLine(LINE(1), (uint8_t*) " CPU ...............................");
   sprintf(buff, "ARM Cortex-M3 @ %dMHz", (int) SystemCoreClock / 1000000);

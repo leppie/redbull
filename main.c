@@ -302,7 +302,7 @@ void RGBLED_GPIO_Config(uint16_t PrescalerValue)
 {
   /* GPIOA Periph clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB | RCC_APB2Periph_AFIO, ENABLE);
-  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3 | RCC_APB1Periph_TIM7, ENABLE);
 
   GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -347,6 +347,26 @@ void RGBLED_GPIO_Config(uint16_t PrescalerValue)
 
   /* TIM3 enable counter */
   TIM_Cmd(TIM3, ENABLE);
+
+  TIM_TimeBaseStructure.TIM_Period = 1023;
+  TIM_TimeBaseStructure.TIM_Prescaler = PrescalerValue;
+
+  TIM_TimeBaseInit(TIM7, &TIM_TimeBaseStructure);
+
+  /* TIM7 TRGO selection */
+  TIM_SelectOutputTrigger(TIM7, TIM_TRGOSource_Update);
+
+  TIM_ITConfig(TIM7, TIM_IT_Update, ENABLE);
+
+  NVIC_InitTypeDef   NVIC_InitStructure;
+
+  NVIC_InitStructure.NVIC_IRQChannel = TIM7_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0x0F;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+
+  //TIM_GenerateEvent(TIM7, TIM_EventSource_Update);
 }
 
 void RGBLED_Update(uint8_t RED_Val, uint8_t GREEN_Val, uint8_t BLUE_Val)
@@ -382,6 +402,7 @@ void RGBLED_Update(uint8_t RED_Val, uint8_t GREEN_Val, uint8_t BLUE_Val)
 
   TIM_OC3PreloadConfig(TIM3, TIM_OCPreload_Enable);
 }
+
 
 uint32_t HSV_to_RGB( float h, float s, float v ) {
 #define long(v) ((uint32_t)(v))
@@ -480,10 +501,11 @@ int main(void)
   LCD_WriteRAM_Prepare();
 
 
+  TIM_Cmd(TIM7, ENABLE);
 
   DMARead();
 
-  float h = 0, s = 1, v = 1;
+  //float h = 0, s = 1, v = 1;
 
   while (1)
   {
@@ -505,77 +527,17 @@ int main(void)
 
     uint32_t buff[160] = { 0 };
 
+    uint16_t tillend = cnt > 160 ? 160 : cnt;
+    uint16_t fromstart = 160 - tillend;
 
-    if (GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_3) == RESET)
+    uint16_t bcnt = cnt - 160;
+
+    // before
+    SRAM_ReadBuffer((uint16_t*) &buff[0], bcnt * 4, tillend * 2);
+    // after
+    if (fromstart)
     {
-      // do fft
-      uint16_t sbuf[1024] = {0};
-
-      uint16_t tillend = cnt > 1024 ? 1024 : cnt;
-      uint16_t fromstart = 1024 - tillend;
-
-      uint16_t bcnt = cnt - 1024;
-
-      // before
-      SRAM_ReadBuffer(&sbuf[0], bcnt, tillend);
-      // after
-      if (fromstart)
-      {
-        SRAM_ReadBuffer(&sbuf[tillend], 0, fromstart);
-      }
-
-      float32_t input[2048], output[1024];
-
-      for (int i = 0; i < 1024; i++)
-      {
-        input[i * 2] = (sbuf[i]/2048.0f) - 1;
-        input[i * 2 + 1] = 0;
-      }
-
-      arm_cfft_radix4_instance_f32 S;
-      arm_cfft_radix4_init_f32(&S, 1024, 0, 0);
-
-      arm_cfft_radix4_f32(&S, input);
-
-      arm_cmplx_mag_f32(input, output, 1024);
-
-      for (int i = 0; i < 1024; i++)
-      {
-        sbuf[i] = (uint16_t) (output[i]);
-      }
-
-      for (int i = 0; i < 256; i++)
-      {
-        ((uint16_t*) buff)[i] = (sbuf[4 * i] + sbuf[4 * i + 1] + sbuf[4 * i + 2] + sbuf[4 * i + 3]) >> 2;
-      }
-
-      bcnt = 0;
-/*
-      for (int i = 0; i < 512; i++)
-      {
-        sbuf[i] = (uint16_t) ((output[i] + output[1023 - i]) * 16);
-      }
-      for (int i = 512; i < 1024 ; i++)
-      {
-        sbuf[i] = 0;
-      }
-*/
-      // profit!
-    }
-    else
-    {
-      uint16_t tillend = cnt > 160 ? 160 : cnt;
-      uint16_t fromstart = 160 - tillend;
-
-      uint16_t bcnt = cnt - 160;
-
-      // before
-      SRAM_ReadBuffer((uint16_t*) &buff[0], bcnt * 4, tillend * 2);
-      // after
-      if (fromstart)
-      {
-        SRAM_ReadBuffer((uint16_t*) &buff[tillend], 0, fromstart * 2);
-      }
+      SRAM_ReadBuffer((uint16_t*) &buff[tillend], 0, fromstart * 2);
     }
 
     uint8_t prevsv = 0;
@@ -647,20 +609,6 @@ int main(void)
 
       RTC_t rtc;
       RTC_GetTime(&rtc);
-
-#define HUE_MAX 6.0f
-#define HUE_DELTA 0.0001f
-
-      h += HUE_DELTA;
-      if (h > HUE_MAX)
-      {
-        h = 0;
-      }
-
-      uint32_t rgb = HSV_to_RGB(h,s,v);
-      uint8_t* k = (uint8_t*) &rgb;
-
-      RGBLED_Update(k[2],k[1],k[0]);
 
       //RGBLED_Update((rtc.min & 1) ? 0 : (rtc.hour * 10), ((rtc.sec >> 2) & 1) ? 0 : (rtc.min * 4), rtc.sec * 4);
 

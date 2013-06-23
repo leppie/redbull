@@ -159,17 +159,30 @@ void SysTick_Handler(void)
   * @}
   */
 
-extern void HandleWakeupButtonPress(void) __attribute__ ((weak));
-extern void HandleTamperButtonPress(void) __attribute__ ((weak));
-extern void HandleUser1ButtonPress(void) __attribute__ ((weak));
-extern void HandleUser2ButtonPress(void)__attribute__ ((weak));
+extern void HandleWakeupButtonDown(void) __attribute__ ((weak));
+extern void HandleTamperButtonDown(void) __attribute__ ((weak));
+extern void HandleUser1ButtonDown(void) __attribute__ ((weak));
+extern void HandleUser2ButtonDown(void)__attribute__ ((weak));
+
+extern void HandleWakeupButtonUp(void) __attribute__ ((weak));
+extern void HandleTamperButtonUp(void) __attribute__ ((weak));
+extern void HandleUser1ButtonUp(void) __attribute__ ((weak));
+extern void HandleUser2ButtonUp(void)__attribute__ ((weak));
 
 void EXTI0_IRQHandler(void)
 {
   if(EXTI_GetITStatus(EXTI_Line0) != RESET)
   {
-    if (HandleWakeupButtonPress)
-      HandleWakeupButtonPress();
+    if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0) == RESET)
+    {
+      if (HandleWakeupButtonDown)
+        HandleWakeupButtonDown();
+    }
+    else
+    {
+      if (HandleWakeupButtonUp)
+        HandleWakeupButtonUp();
+    }
 
     EXTI_ClearITPendingBit(EXTI_Line0);
   }
@@ -179,8 +192,16 @@ void EXTI3_IRQHandler(void)
 {
   if(EXTI_GetITStatus(EXTI_Line3) != RESET)
   {
-    if (HandleUser2ButtonPress)
-      HandleUser2ButtonPress();
+    if (GPIO_ReadInputDataBit(GPIOD, GPIO_Pin_3) == RESET)
+    {
+      if (HandleUser2ButtonDown)
+        HandleUser2ButtonDown();
+    }
+    else
+    {
+      if (HandleUser2ButtonUp)
+        HandleUser2ButtonUp();
+    }
 
     EXTI_ClearITPendingBit(EXTI_Line3);
   }
@@ -190,8 +211,16 @@ void EXTI9_5_IRQHandler(void)
 {
   if(EXTI_GetITStatus(EXTI_Line8) != RESET)
   {
-    if (HandleUser1ButtonPress)
-      HandleUser1ButtonPress();
+    if (GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_8) == RESET)
+    {
+      if (HandleUser1ButtonDown)
+        HandleUser1ButtonDown();
+    }
+    else
+    {
+      if (HandleUser1ButtonUp)
+        HandleUser1ButtonUp();
+    }
 
     EXTI_ClearITPendingBit(EXTI_Line8);
   }
@@ -201,10 +230,45 @@ void EXTI15_10_IRQHandler(void)
 {
   if(EXTI_GetITStatus(EXTI_Line13) != RESET)
   {
-    if(HandleTamperButtonPress)
-      HandleTamperButtonPress();
+    if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_13) == RESET)
+    {
+      if(HandleTamperButtonDown)
+        HandleTamperButtonDown();
+    }
+    else
+    {
+      if(HandleTamperButtonUp)
+        HandleTamperButtonUp();
+    }
 
     EXTI_ClearITPendingBit(EXTI_Line13);
+  }
+}
+
+uint32_t HSV_to_RGB( float h, float s, float v);
+void RGBLED_Update(uint8_t RED_Val, uint8_t GREEN_Val, uint8_t BLUE_Val);
+
+static float h = 0, s = 1, v = 1;
+
+void TIM7_IRQHandler(void)
+{
+  if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
+  {
+#define HUE_MAX 6.0f
+#define HUE_DELTA 0.001f
+
+      h += HUE_DELTA;
+      if (h > HUE_MAX)
+      {
+        h = 0;
+      }
+
+      uint32_t rgb = HSV_to_RGB(h,s,v);
+      uint8_t* k = (uint8_t*) &rgb;
+
+      RGBLED_Update(k[2],k[1],k[0]);
+
+      TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
   }
 }
 
